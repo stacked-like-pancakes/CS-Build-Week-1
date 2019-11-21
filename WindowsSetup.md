@@ -54,7 +54,7 @@
 
         2.  Confirm that `/usr/bin/python3 --version` refers to 3.6.8
 
-        3.  `pipenv --three --python=`which python3``  &lt;&lt; NOTE that there are backticks (`) around *which python3*
+        3.  `pipenv --three --python=`which python3``  *NOTE* that there are backticks (`) around *which python3*
 
         4.  This should create the shell forcing it to use 3.6.8
 
