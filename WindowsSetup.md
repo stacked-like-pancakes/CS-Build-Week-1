@@ -20,7 +20,7 @@
 
             2.  `sudo apt-get upgrade`
 
-    2.  Repeat 2.1 above to determine if you should use `Python` or `Python3`
+    2.  Repeat 2.1 above to determine if you should use `Python` or `Python3` when using Python.  *Note:* inside the shell, you will always use *Python* as the command.
 
 3.  Using Gitbash, or whichever method you have been using, clone the repository for Build Week 2
 
