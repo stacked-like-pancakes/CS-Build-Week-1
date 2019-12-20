@@ -8,6 +8,7 @@
 * [`pipenv` command not found](#q300)
 * [`pg_config` command not found](#q400)
 * [I use OneDrive. And I'm getting `PermissionError: [Errno 13] Permission denied` when running the command `pipenv install django`](#q800)
+* [I'm using Windows and nothing is working.  Help!](https://github.com/LambdaSchool/CS-Build-Week-1/blob/master/WindowsSetup.md)(External File)
 
 ### Backend
 

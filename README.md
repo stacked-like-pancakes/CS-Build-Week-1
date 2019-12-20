@@ -11,6 +11,8 @@ With the adventure game built in previous weeks, you have already created an app
 
 ## Deliverables
 
+For those who want an alternative to Django, we are offering a [Flask Alternative](https://github.com/LambdaSchool/CS-Build-Week-1-Flask).
+
 Each team is responsible for building and deploying a functional MUD server, migrating a unique world onto that server, and creating a visualization and navigation client interface. We provide starter Django code with much of the server functionality implemented.
 
 
@@ -169,6 +171,10 @@ Here's a sample project created by [a team in CSPT2](https://confident-wright-ca
 And here's [a FT team](https://lambdaschool.com/lab-demos/lambda-mud) that went above and beyond with their use of graphics:
 
 ![Lambda MUD 2](img/ex_lambdamud.png)
+
+And here's an example on iOS:
+
+![Lambda MUD Mobile](img/ios_lambdamud.jpg)
 
 ### 2. How do I build something like that?
 
