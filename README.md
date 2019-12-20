@@ -11,6 +11,8 @@ With the adventure game built in previous weeks, you have already created an app
 
 ## Deliverables
 
+For those who want an alternative to Django, we are offering a [Flask Alternative](https://github.com/LambdaSchool/CS-Build-Week-1-Flask).
+
 Each team is responsible for building and deploying a functional MUD server, migrating a unique world onto that server, and creating a visualization and navigation client interface. We provide starter Django code with much of the server functionality implemented.
 
 
