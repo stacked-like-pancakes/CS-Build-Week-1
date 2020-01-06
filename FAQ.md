@@ -45,10 +45,10 @@ Then:
 
 ```sh
 brew install openssl
-sudo cp $(brew --prefix openssl)/lib/libssl.1.0.0.dylib /usr/local/lib
-sudo cp $(brew --prefix openssl)/lib/libcrypto.1.0.0.dylib /usr/local/lib
-sudo ln -s /usr/local/lib/libssl.1.0.0.dylib /usr/local/lib/libssl.dylib
-sudo ln -s /usr/local/lib/libcrypto.1.0.0.dylib /usr/local/lib/libcrypto.dylib
+sudo cp $(brew --prefix openssl)/lib/libssl.1.1.dylib /usr/local/lib
+sudo cp $(brew --prefix openssl)/lib/libcrypto.1.1.dylib /usr/local/lib
+sudo ln -s /usr/local/lib/libssl.1.1.dylib /usr/local/lib/libssl.dylib
+sudo ln -s /usr/local/lib/libcrypto.1.1.dylib /usr/local/lib/libcrypto.dylib
 ```
 
 then try `pipenv install` again.
