@@ -61,6 +61,32 @@ def move(request):
         return JsonResponse({'name': player.user.username, 'title': room.title, 'description': room.description, 'players': players, 'error_msg': "You cannot move that way."}, safe=True)
 
 
+def interact(request):
+    command = {
+        "g": "grab",
+        "d": "drop"
+    }
+    player = request.user.player
+    player_id = player.id
+    player_uuid = player.uuid
+    room = player.room()
+    # * object from POST request body
+    data = json.loads(request.body)
+    # * value of specified key in data from POST request body
+    command = data['command']
+    # * Assumes a player provies an item_id in POST request body
+    item_id = data['item_id']
+    # * If player uses a 'grab' command, pick up item by adding it to player's inventory and removing it from the room
+    if command == 'g':
+        # * Assume items in a room are stored in a 'contents' list and that only one of an item exists in a room
+        item = next(
+            (entry for entry in room.contents if entry['id'] == item_id), None)
+        player.inventory.append(item)
+        # * Remove item from room's contents
+        room.contents = list(
+            filter(lambda i: i['id'] != item_id), room.contents)
+
+
 @csrf_exempt
 @api_view(["POST"])
 def say(request):
