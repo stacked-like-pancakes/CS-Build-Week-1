@@ -10,30 +10,30 @@ class Room(models.Model):
     title = models.CharField(max_length=50, default="DEFAULT TITLE")
     description = models.CharField(
         max_length=500, default="DEFAULT DESCRIPTION")
-    n_to = models.IntegerField(default=0)
-    s_to = models.IntegerField(default=0)
-    e_to = models.IntegerField(default=0)
-    w_to = models.IntegerField(default=0)
+    north = models.IntegerField(default=0)
+    south = models.IntegerField(default=0)
+    east = models.IntegerField(default=0)
+    west = models.IntegerField(default=0)
+    x = models.IntegerField(default=0)
+    y = models.IntegerField(default=0)
+    # items = models.ManyToManyField()
 
-    def connectRooms(self, destinationRoom, direction):
-        destinationRoomID = destinationRoom.id
+    def connectRooms(self, destination_room, direction):
+        destination_id = destination_room.id
+        opposite = {
+            'north': 'south',
+            'south': 'north',
+            'east': 'west',
+            'west': 'east'
+        }
         try:
-            destinationRoom = Room.objects.get(id=destinationRoomID)
+            destination = Room.objects.get(id=destination_id)
         except Room.DoesNotExist:
             print("That room does not exist")
         else:
-            if direction == "n":
-                self.n_to = destinationRoomID
-            elif direction == "s":
-                self.s_to = destinationRoomID
-            elif direction == "e":
-                self.e_to = destinationRoomID
-            elif direction == "w":
-                self.w_to = destinationRoomID
-            else:
-                print("Invalid direction")
-                return
-            self.save()
+            setattr(self, direction, destination)
+            return
+        self.save()
 
     def playerNames(self, currentPlayerID):
         return [p.user.username for p in Player.objects.filter(currentRoom=self.id) if p.id != int(currentPlayerID)]
