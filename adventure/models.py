@@ -41,6 +41,10 @@ class Room(models.Model):
     def playerUUIDs(self, currentPlayerID):
         return [p.uuid for p in Player.objects.filter(currentRoom=self.id) if p.id != int(currentPlayerID)]
 
+    # * Returns a list of all items contained in that room
+    def items(self):
+        return [{item.name, item.uuid} for item in Item.objects.filter(currentRoom=self.id)]
+
 
 class Player(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -58,6 +62,12 @@ class Player(models.Model):
         except Room.DoesNotExist:
             self.initialize()
             return self.room()
+
+
+class Item(models.Model):
+    base = models.CharField(max_length=128)
+    currentRoom = models.IntegerField(default=0)
+    uuid = models.UUIDField(defaul=uuid.uuid4, unique=True)
 
 
 @receiver(post_save, sender=User)

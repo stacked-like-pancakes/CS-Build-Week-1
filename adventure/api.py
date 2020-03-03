@@ -63,6 +63,7 @@ def move(request):
 
 def interact(request):
     command = {
+        "i": "inspect",
         "g": "grab",
         "d": "drop"
     }
@@ -78,10 +79,22 @@ def interact(request):
     item_id = data['item_id']
     # * Assume items in a room are stored in a 'contents' list and that only one of an item exists in a room
     # * Additionally, assume items() method on room class to return a list of items in a room
-    item = room.items(item_id)
+
+    items = room.items()
+    # * If player users 'inspect' command, return a list of the items contained in the room
+    if command == 'i':
+        if len(items) > 0:
+            return JsonResponse({
+                'contents': items
+            })
+        else:
+            return JsonResponse({
+                'error_msg': 'This room has no items.'
+            })
     # * If player uses a 'grab' command, pick up item by adding it to player's inventory and removing it from the room
     if command == 'g':
-        player.inventory.append(item)
+        # * Store id only...?
+        player.inventory.append(item_id)
         # * Remove item from room's contents
         room.contents = list(
             filter(lambda i: i['id'] != item_id), room.contents)
