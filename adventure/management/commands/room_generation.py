@@ -2,12 +2,11 @@ import random
 from adventure.models import Player, Room
 from django.core.management.base import BaseCommand, CommandError
 from django.contrib.auth.models import User
-# prompt for how many rooms to generate
 # start at 0,0
 # keep track of current location on map
 # traverse map randomly
 # if room exists, travel there
-# else room doesn't exist, create a new room
+# else room doesn't exist, create a new room in that direction
 # increment room count
 
 
