@@ -73,7 +73,7 @@ class Item(models.Model):
     base = models.CharField(max_length=128)
     # * Possessor is either a room_id or a user_id -- depending on what object 'owns' the item
     currentPosessor = models.IntegerField(default=0)
-    uuid = models.UUIDField(defaul=uuid.uuid4, unique=True)
+    uuid = models.UUIDField(default=uuid.uuid4, unique=True)
 
 
 @receiver(post_save, sender=User)
