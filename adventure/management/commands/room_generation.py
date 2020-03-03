@@ -43,7 +43,7 @@ def generate_map(room_count, width, height):
         next_room = getattr(current_room, direction, None)
         while next_room is not None:
             print(next_room.title)
-            print(f'total rooms created: {room_count}')
+            print(f'total rooms created: {rooms}')
             print(f'current_room is {current_room.title} at {x_cor}, {y_cor}')
             if direction == 'north':
                 print("we're going going north")
@@ -62,6 +62,7 @@ def generate_map(room_count, width, height):
             # choose a new direction / current downside allows for backtracking
             new_direction = random.choice(choices)
             direction = new_direction
+            next_room = getattr(current_room, direction, None)
 
         # generate a new room
         print(f'made it to room generation, total rooms:{rooms}')
