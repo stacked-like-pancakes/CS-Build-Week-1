@@ -14,6 +14,7 @@ class Room(models.Model):
     s_to = models.IntegerField(default=0)
     e_to = models.IntegerField(default=0)
     w_to = models.IntegerField(default=0)
+    # * Provide field for storing an item...?
 
     def connectRooms(self, destinationRoom, direction):
         destinationRoomID = destinationRoom.id
@@ -41,8 +42,8 @@ class Room(models.Model):
     def playerUUIDs(self, currentPlayerID):
         return [p.uuid for p in Player.objects.filter(currentRoom=self.id) if p.id != int(currentPlayerID)]
 
-    # * Returns a list of all items contained in that room
-    def items(self):
+    # * Returns a list of dicts containing id and name for all objects in that room
+    def contents(self):
         return [{item.name, item.uuid} for item in Item.objects.filter(currentRoom=self.id)]
 
 
@@ -63,10 +64,15 @@ class Player(models.Model):
             self.initialize()
             return self.room()
 
+    # * Returns a list of all objects whose current_id matches the player's user_id
+    def inventory(self):
+        return Item.objects.get(currentPossessor=self.id)
+
 
 class Item(models.Model):
     base = models.CharField(max_length=128)
-    currentRoom = models.IntegerField(default=0)
+    # * Possessor is either a room_id or a user_id -- depending on what object 'owns' the item
+    currentPosessor = models.IntegerField(default=0)
     uuid = models.UUIDField(defaul=uuid.uuid4, unique=True)
 
 
