@@ -7,7 +7,7 @@
 
 
 class Room:
-    def __init__(self, id, name, description, x, y):
+    def __init__(self, id, name, description, x, y, ):
         self.id = id
         self.name = name
         self.description = description
@@ -24,18 +24,14 @@ class Room:
         return f"({self.x}, {self.y})"
 
     def connect_rooms(self, connecting_room, direction):
-        '''
-        Connect two rooms in the given n/s/e/w direction
-        '''
+        '''Connect two rooms in the given n/s/e/w direction'''
         reverse_dirs = {"n": "s", "s": "n", "e": "w", "w": "e"}
         reverse_dir = reverse_dirs[direction]
         setattr(self, f"{direction}_to", connecting_room)
         setattr(connecting_room, f"{reverse_dir}_to", self)
 
     def get_room_in_direction(self, direction):
-        '''
-        Connect two rooms in the given n/s/e/w direction
-        '''
+        '''Connect two rooms in the given n/s/e/w direction'''
         return getattr(self, f"{direction}_to")
 
 
@@ -46,9 +42,7 @@ class World:
         self.height = 0
 
     def generate_rooms(self, size_x, size_y, num_rooms):
-        '''
-        Fill up the grid, bottom to top, in a zig-zag pattern
-        '''
+        '''Fill up the grid, bottom to top, in a zig-zag pattern'''
 
         # Initialize the grid
         self.grid = [None] * size_y
@@ -99,9 +93,7 @@ class World:
             room_count += 1
 
     def print_rooms(self):
-        '''
-        Print the rooms in room_grid in ascii characters.
-        '''
+        '''Print the rooms in room_grid in ascii characters.'''
 
         # Add top border
         str = "# " * ((3 + self.width * 5) // 2) + "\n"
@@ -154,9 +146,10 @@ class World:
 
 
 w = World()
-num_rooms = 44
+
+num_rooms = 62
 width = 8
-height = 7
+height = 8
 w.generate_rooms(width, height, num_rooms)
 w.print_rooms()
 
