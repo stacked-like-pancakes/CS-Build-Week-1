@@ -44,7 +44,7 @@ class Room(models.Model):
 
     # * Returns a list of dicts containing id and name for all objects in that room
     def contents(self):
-        return [{item.name, item.uuid} for item in Item.objects.filter(currentRoom=self.id)]
+        return [{item.name, item.currentPossessor, item.uuid} for item in Item.objects.filter(currentRoom=self.id)]
 
 
 class Player(models.Model):
@@ -72,7 +72,7 @@ class Player(models.Model):
 class Item(models.Model):
     base = models.CharField(max_length=128)
     # * Possessor is either a room_id or a user_id -- depending on what object 'owns' the item
-    currentPosessor = models.IntegerField(default=0)
+    currentPossessor = models.IntegerField(default=0)
     uuid = models.UUIDField(default=uuid.uuid4, unique=True)
 
 
