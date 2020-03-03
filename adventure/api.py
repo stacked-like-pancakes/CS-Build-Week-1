@@ -78,7 +78,7 @@ def interact(request):
     item_id = data['item_id']
     # * Assume items in a room are stored in a 'contents' list and that only one of an item exists in a room
     # * Additionally, assume items() method on room class to return a list of items in a room
-    item = room.items()
+    item = room.items(item_id)
     # * If player uses a 'grab' command, pick up item by adding it to player's inventory and removing it from the room
     if command == 'g':
         player.inventory.append(item)
