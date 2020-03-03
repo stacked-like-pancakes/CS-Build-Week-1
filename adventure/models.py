@@ -14,8 +14,8 @@ class Room(models.Model):
     south = models.IntegerField(default=None, null=True)
     east = models.IntegerField(default=None, null=True)
     west = models.IntegerField(default=None, null=True)
-    x = models.IntegerField(default=0)
-    y = models.IntegerField(default=0)
+    x_cor = models.IntegerField(default=0)
+    y_cor = models.IntegerField(default=0)
 
     def connectRooms(self, destination_room, direction):
         opposite = {
