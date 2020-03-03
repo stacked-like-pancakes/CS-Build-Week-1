@@ -93,7 +93,8 @@ def interact(request):
     if command == 'g':
         # * Retrieve id for item to grab
         # TODO: Update with mechanism to match given input to an item
-        item = None
+        item = next(
+            (item for item in contents if item['id'] == item_id), None)
         item.currentPosessor = player_id
         item.save()
         return JsonResponse({
@@ -104,6 +105,8 @@ def interact(request):
     if command == 'd':
         # * Dropping will set the item's currentPossessor field to the id of the room.
         # TODO: Update with mechanism to match given input to an item
+        item = next(
+            (item for item in inventory if item['id'] == item_id), None)
         item = None
         item.currentPossessor = room_id
         item.save()
