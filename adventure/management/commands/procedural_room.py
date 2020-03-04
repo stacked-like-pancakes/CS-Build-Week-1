@@ -17,7 +17,7 @@ content_room = {
     "generic_room": {"title": "Lobby", "description": "This room is quite forgetable."},
     "dinning_room": {"title": "Ruined Dinning Room", "description": "You find yourself in a ruined dinning room. You see a broken table crumbled onto the ground with broken plates all around it."},
     "office": {"title": "Fancy Office", "description": "You enter what was once the office of a very successful scientist who left in a hurry. You spot glass and metal scattered across the ground."},
-    "library": {"title": "Decrepit Library", "description": "You push open a door and walk into an old library. The movement of the  door disturbs papers laying all over the foor pushing them into the air, startling a fmaily of rats in the corner."},
+    "library": {"title": "Decrepit Library", "description": "You push open a door and walk into an old library. The movement of the  door disturbs papers laying all over the foor pushing them into the air, startling a family of rats in the corner."},
 }
 
 special_room = {
