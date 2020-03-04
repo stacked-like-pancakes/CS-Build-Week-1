@@ -35,13 +35,13 @@ class Room(models.Model):
         }
         try:
             destination = Room.objects.get(id=destination_room.id)
-            print(f'successfully got destination at {destination}')
         except Room.DoesNotExist:
             print("That room does not exist")
         else:
             setattr(self, direction, destination)
             setattr(destination, opposite[direction], self)
             self.save()
+            destination.save()
             print(f'successfully connected {self} to {destination}')
 
     # gets the player name with the given ID
