@@ -63,6 +63,7 @@ def move(request):
 
 def interact(request):
     command = {
+        "i": "inspect",
         "g": "grab",
         "d": "drop"
     }
@@ -70,37 +71,45 @@ def interact(request):
     player_id = player.id
     player_uuid = player.uuid
     room = player.room()
+    room_id = room.id
     # * object from POST request body
     data = json.loads(request.body)
     # * value of specified key in data from POST request body
     command = data['command']
     # * Assumes a player provies an item_id in POST request body
     item_id = data['item_id']
-    # * Assume items in a room are stored in a 'contents' list and that only one of an item exists in a room
     # * Additionally, assume items() method on room class to return a list of items in a room
-    item = room.items(item_id)
-    # * If player uses a 'grab' command, pick up item by adding it to player's inventory and removing it from the room
-    if command == 'g':
-        player.inventory.append(item)
-        # * Remove item from room's contents
-        room.contents = list(
-            filter(lambda i: i['id'] != item_id), room.contents)
+    inventory = player.inventory()
+    contents = room.contents()
 
-        player.save()
-        room.save()
+    # * If player users 'inspect' command, return a list of the items contained in the room
+    if command == 'i':
+        return JsonResponse({
+            'contents': contents,
+            'inventory': inventory
+        })
+
+    # * If player uses a 'grab' command, pick up item by updating the item's currentPossessor field
+    if command == 'g':
+        # * Retrieve id for item to grab
+
+        item = next(
+            (item for item in contents if item['id'] == item_id), None)
+        item.currentPosessor = player_id
+        item.save()
         return JsonResponse({
             'name': player.user.username,
             'inventory': player.inventory,
             'contents': room.contents
         })
     if command == 'd':
-        # * remove item from player's inventory
-        player.inventory = list(
-            filter(lambda i: i['id'] != item_id), room.contents)
-        # * Add 'dropped' item to room's contents
-        room.contents.append(item)
-        player.save()
-        room.save()
+        # * Dropping will set the item's currentPossessor field to the id of the room.
+
+        item = next(
+            (item for item in inventory if item['id'] == item_id), None)
+        item = None
+        item.currentPossessor = room_id
+        item.save()
         return JsonResponse({
             'name': player.user.username,
             'inventory': player.inventory,
