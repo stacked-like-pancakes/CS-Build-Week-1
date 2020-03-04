@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from .models import *
 from rest_framework.decorators import api_view
 import json
+from rest_framework import serializers
 
 # instantiate pusher
 # pusher = Pusher(app_id=config('PUSHER_APP_ID'), key=config('PUSHER_KEY'), secret=config('PUSHER_SECRET'), cluster=config('PUSHER_CLUSTER'))
@@ -66,3 +67,24 @@ def move(request):
 def say(request):
     # IMPLEMENT
     return JsonResponse({'error': "Not yet implemented"}, safe=True, status=500)
+
+
+class RoomSerializer(serializers.Serializer):
+    title = serializers.CharField()
+    description = serializers.CharField()
+    # north = meta serialzier for a room?
+    # south = meta serializers for a room
+    # east = meta serializers for a room
+    # west = meta serializers for a room
+    x_cor = serializers.IntegerField()
+    y_cor = serializers.IntegerField()
+
+
+# @csrf_exempt
+@api_view(["GET"])
+def rooms(request):
+    dungeon = Room.objects.all()
+    serializer = RoomSerializer(dungeon, many=True)
+    print(dungeon)
+    return JsonResponse({"dungeon": serializer.data})
+    # return the entire rooms table, good luck
