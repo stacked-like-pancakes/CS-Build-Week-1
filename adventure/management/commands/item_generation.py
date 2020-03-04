@@ -40,6 +40,9 @@ def populate_items(items_count):
 
     while items_populated < items_count:
         new_item = Item(base=f'{adjectives[random.randrange(len(adjectives))]} {base_names[random.randrange(len(base_names))]}',
-                        currentPosessor=room_ids[random.randrange(len(room_ids))])
+                        currentPossessor=room_ids[random.randrange(len(room_ids))])
         items_populated += 1
+        new_item.save()
+        print(
+            f'new_item || base: {new_item.base} || currentPossessor: {new_item.currentPossessor}')
     return 'Complete'
