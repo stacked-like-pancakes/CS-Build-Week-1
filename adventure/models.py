@@ -10,10 +10,6 @@ class Room(models.Model):
     title = models.CharField(max_length=50, default="DEFAULT TITLE")
     description = models.CharField(
         max_length=500, default="DEFAULT DESCRIPTION")
-    # north = models.IntegerField(default=None, null=True)
-    # south = models.IntegerField(default=None, null=True)
-    # east = models.IntegerField(default=None, null=True)
-    # west = models.IntegerField(default=None, null=True)
     north = models.ForeignKey(
         'self', related_name="north_exit", on_delete=models.CASCADE, null=True)
     south = models.ForeignKey(
@@ -54,6 +50,10 @@ class Room(models.Model):
         return [p.uuid for p in Player.objects.filter(currentRoom=self.id)
                 if p.id != int(currentPlayerID)]
 
+    # * Returns a list of dicts containing id and name for all objects in that room
+    def contents(self):
+        return [{item.name, item.currentPossessor, item.uuid} for item in Item.objects.filter(currentRoom=self.id)]
+
 
 class Player(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -74,6 +74,17 @@ class Player(models.Model):
         except Room.DoesNotExist:
             self.initialize()
             return self.room()
+
+    # * Returns a list of all objects whose current_id matches the player's user_id
+    def inventory(self):
+        return Item.objects.get(currentPossessor=self.id)
+
+
+class Item(models.Model):
+    base = models.CharField(max_length=128)
+    # * Possessor is either a room_id or a user_id -- depending on what object 'owns' the item
+    currentPossessor = models.IntegerField(default=0)
+    uuid = models.UUIDField(default=uuid.uuid4, unique=True)
 
 
 @receiver(post_save, sender=User)
