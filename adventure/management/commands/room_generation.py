@@ -12,11 +12,11 @@ from django.contrib.auth.models import User
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        try:
-            Room.objects.all().delete()
-            generate_map(20, 8, 8)
-        except:
-            raise CommandError("Your generation done goofed.")
+        # try:
+        Room.objects.all().delete()
+        generate_map(20, 8, 8)
+        # except:
+        # raise CommandError("Your generation done goofed.")
 
 
 def generate_map(room_count, width, height):
@@ -38,34 +38,42 @@ def generate_map(room_count, width, height):
         # choose a direction randomly
         random_direction = random.choice(choices)
         direction = random_direction
+        if direction == 'north':
+            print("we're going north")
+            y_cor += 1
+        if direction == 'south':
+            print("we're going south")
+            y_cor -= 1
+        if direction == 'east':
+            print("we're going east")
+            x_cor += 1
+        if direction == 'west':
+            print("we're going west")
+            x_cor -= 1
 
         # traverse until a dead end, adjust coordinates as neccessary
         next_room = getattr(current_room, direction, None)
         while next_room is not None:
-            print(next_room.title)
-            print(f'total rooms created: {rooms}')
-            print(f'current_room is {current_room.title} at {x_cor}, {y_cor}')
-            if direction == 'north':
-                print("we're going going north")
-                y_cor += 1
-            if direction == 'south':
-                print("we're going going south")
-                y_cor -= 1
-            if direction == 'east':
-                print("we're going going east")
-                x_cor += 1
-            if direction == 'west':
-                print("we're going going west")
-                x_cor -= 1
-
+            print(f'postion at: {x_cor}, {y_cor}')
             current_room = next_room
-            # choose a new direction / current downside allows for backtracking
+            # choose a new direction
             new_direction = random.choice(choices)
             direction = new_direction
             next_room = getattr(current_room, direction, None)
+            if direction == 'north':
+                print("we're going north")
+                y_cor += 1
+            if direction == 'south':
+                print("we're going south")
+                y_cor -= 1
+            if direction == 'east':
+                print("we're going east")
+                x_cor += 1
+            if direction == 'west':
+                print("we're going west")
+                x_cor -= 1
 
         # generate a new room
-        print(f'made it to room generation, total rooms:{rooms}')
         # new_room = Room.objects.create(title=f'generic room at {x_cor}, {y_cor}',
         #                                description='Has the dusty smell of stone', x_cor=x_cor, y_cor=y_cor)
         new_room = Room(title=f'generic room at {x_cor}, {y_cor}',
