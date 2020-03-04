@@ -45,10 +45,8 @@ def generate_map(room_count, width, height):
             x_cor += 1
         if direction == 'west':
             x_cor -= 1
-        # print(f'postion at: {x_cor}, {y_cor}')
 
         # traverse until a dead end, adjust coordinates as neccessary
-
         next_room = getattr(current_room, direction, None)
         while next_room is not None:
             current_room = next_room
@@ -65,21 +63,17 @@ def generate_map(room_count, width, height):
             if direction == 'west':
                 x_cor -= 1
 
-        # generate a new room
-        # new_room = Room.objects.create(title=f'generic room at {x_cor}, {y_cor}',
-        #                                description='Has the dusty smell of stone', x_cor=x_cor, y_cor=y_cor)
-
         # check if a room isnt already at that coordinate
-        # query the room Table for the same two columns, the record where X is -1, and Y is -1
         room_set = Room.objects.filter(x_cor=x_cor, y_cor=y_cor)
         if len(room_set) == 0:
+            # if empty, generate a new room
             new_room = Room(title=f'generic room at {x_cor}, {y_cor}',
                             description='Has the dusty smell of stone', x_cor=x_cor, y_cor=y_cor)
             new_room.save()
             current_room.connectRooms(new_room, direction)
             rooms += 1
         else:
-            # if it exists, just connect the rooms
+            # if it exists, just connect the rooms and go back to spawn
             new_room = room_set[0]
             current_room.connectRooms(new_room, direction)
 
