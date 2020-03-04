@@ -31,7 +31,6 @@ adjectives = [
 
 # * Obtain list of room id's
 # * Create item with randomly generated adjective+base_name and a random room id
-# * Randomly generate adjective+ base_name
 
 
 def populate_items(items_count):
@@ -43,6 +42,6 @@ def populate_items(items_count):
                         currentPossessor=room_ids[random.randrange(len(room_ids))])
         items_populated += 1
         new_item.save()
-        print(
-            f'new_item || base: {new_item.base} || currentPossessor: {new_item.currentPossessor}')
+        # print(
+        #     f'new_item || base: {new_item.base} || currentPossessor: {new_item.currentPossessor}')
     return 'Complete'
