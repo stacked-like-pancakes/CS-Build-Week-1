@@ -26,40 +26,55 @@ def initialize(request):
 
 
 # @csrf_exempt
+# what is csrf_exempt
+# what is in a request, django
+# return the new player room
+
 @api_view(["POST"])
 def move(request):
-    dirs = {"n": "north", "s": "south", "e": "east", "w": "west"}
-    reverse_dirs = {"n": "south", "s": "north", "e": "west", "w": "east"}
+    direction = request.data['direction']
+
     player = request.user.player
     player_id = player.id
     player_uuid = player.uuid
-    data = json.loads(request.body)
-    direction = data['direction']
-    room = player.room()
-    nextRoomID = None
-    if direction == "n":
-        nextRoomID = room.n_to
-    elif direction == "s":
-        nextRoomID = room.s_to
-    elif direction == "e":
-        nextRoomID = room.e_to
-    elif direction == "w":
-        nextRoomID = room.w_to
-    if nextRoomID is not None and nextRoomID > 0:
-        nextRoom = Room.objects.get(id=nextRoomID)
-        player.currentRoom = nextRoomID
+
+    dirs = {"n": "north", "s": "south", "e": "east", "w": "west"}
+    reverse_dirs = {"n": "south", "s": "north", "e": "west", "w": "east"}
+
+    current_room = player.room()
+    next_room = getattr(current_room, dirs[direction], None)
+
+    if next_room is not None:
+        # * move the player to the next room
+        player.current_room = next_room
         player.save()
-        players = nextRoom.playerNames(player_id)
-        currentPlayerUUIDs = room.playerUUIDs(player_id)
-        nextPlayerUUIDs = nextRoom.playerUUIDs(player_id)
+
+        # ? what is this line doing?
+        players = next_room.playerNames(player_id)
+        currentPlayerUUIDs = current_room.playerUUIDs(player_id)
+        nextPlayerUUIDs = next_room.playerUUIDs(player_id)
         # for p_uuid in currentPlayerUUIDs:
         #     pusher.trigger(f'p-channel-{p_uuid}', u'broadcast', {'message':f'{player.user.username} has walked {dirs[direction]}.'})
         # for p_uuid in nextPlayerUUIDs:
         #     pusher.trigger(f'p-channel-{p_uuid}', u'broadcast', {'message':f'{player.user.username} has entered from the {reverse_dirs[direction]}.'})
-        return JsonResponse({'name': player.user.username, 'title': nextRoom.title, 'description': nextRoom.description, 'players': players, 'error_msg': ""}, safe=True)
+        return JsonResponse({
+            'name': player.user.username,
+            'title': player.current_room.title,
+            'description': player.current_room.description,
+            'current_x': player.current_room.x_cor,
+            'current_y': player.current_room.y_cor,
+            'players': players,
+            'error_msg': ""}, safe=True)
     else:
-        players = room.playerNames(player_id)
-        return JsonResponse({'name': player.user.username, 'title': room.title, 'description': room.description, 'players': players, 'error_msg': "You cannot move that way."}, safe=True)
+        players = current_room.playerNames(player_id)
+        return JsonResponse({
+            'name': player.user.username,
+            'title': player.current_room.title,
+            'description': player.current_room.description,
+            'current_x': player.current_room.x_cor,
+            'current_y': player.current_room.y_cor,
+            'players': players,
+            'error_msg': "You cannot move that way."}, safe=True)
 
 
 def interact(request):
@@ -105,7 +120,6 @@ def interact(request):
         })
     if command == 'd':
         # * Dropping will set the item's currentPossessor field to the id of the room.
-
         item = next(
             (item for item in inventory if item['id'] == item_id), None)
         item = None
