@@ -85,6 +85,5 @@ class RoomSerializer(serializers.Serializer):
 def rooms(request):
     dungeon = Room.objects.all()
     serializer = RoomSerializer(dungeon, many=True)
-    print(dungeon)
-    return JsonResponse({"dungeon": serializer.data})
+    return JsonResponse({"dungeon": serializer.data, 'rooms shown': len(serializer.data)})
     # return the entire rooms table, good luck
