@@ -62,6 +62,7 @@ def move(request):
         return JsonResponse({'name': player.user.username, 'title': room.title, 'description': room.description, 'players': players, 'error_msg': "You cannot move that way."}, safe=True)
 
 
+@api_view(["POST"])
 def interact(request):
     command = {
         "i": "inspect",
