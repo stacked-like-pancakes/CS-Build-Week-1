@@ -10,37 +10,45 @@ class Room(models.Model):
     title = models.CharField(max_length=50, default="DEFAULT TITLE")
     description = models.CharField(
         max_length=500, default="DEFAULT DESCRIPTION")
-    n_to = models.IntegerField(default=0)
-    s_to = models.IntegerField(default=0)
-    e_to = models.IntegerField(default=0)
-    w_to = models.IntegerField(default=0)
-    # * Provide field for storing an item...?
+    north = models.ForeignKey(
+        'self', related_name="north_exit", on_delete=models.CASCADE, null=True)
+    south = models.ForeignKey(
+        'self', related_name="south_exit", on_delete=models.CASCADE, null=True)
+    west = models.ForeignKey(
+        'self', related_name="west_exit", on_delete=models.CASCADE, null=True)
+    east = models.ForeignKey(
+        'self', related_name="east_exit", on_delete=models.CASCADE, null=True)
+    x_cor = models.IntegerField(default=0)
+    y_cor = models.IntegerField(default=0)
 
-    def connectRooms(self, destinationRoom, direction):
-        destinationRoomID = destinationRoom.id
+    def connectRooms(self, destination_room, direction):
+        print(f'initializing connection from {self} to {destination_room}')
+        opposite = {
+            'north': 'south',
+            'south': 'north',
+            'east': 'west',
+            'west': 'east'
+        }
         try:
-            destinationRoom = Room.objects.get(id=destinationRoomID)
+            destination = Room.objects.get(id=destination_room.id)
         except Room.DoesNotExist:
             print("That room does not exist")
         else:
-            if direction == "n":
-                self.n_to = destinationRoomID
-            elif direction == "s":
-                self.s_to = destinationRoomID
-            elif direction == "e":
-                self.e_to = destinationRoomID
-            elif direction == "w":
-                self.w_to = destinationRoomID
-            else:
-                print("Invalid direction")
-                return
+            setattr(self, direction, destination)
+            setattr(destination, opposite[direction], self)
             self.save()
+            destination.save()
+            print(f'successfully connected {self} to {destination}')
 
+    # gets the player name with the given ID
     def playerNames(self, currentPlayerID):
-        return [p.user.username for p in Player.objects.filter(currentRoom=self.id) if p.id != int(currentPlayerID)]
+        return [p.user.username for p in Player.objects.filter(currentRoom=self.id)
+                if p.id != int(currentPlayerID)]
 
+    # what is the player UUID?
     def playerUUIDs(self, currentPlayerID):
-        return [p.uuid for p in Player.objects.filter(currentRoom=self.id) if p.id != int(currentPlayerID)]
+        return [p.uuid for p in Player.objects.filter(currentRoom=self.id)
+                if p.id != int(currentPlayerID)]
 
     # * Returns a list of dicts containing id and name for all objects in that room
     def contents(self):
@@ -49,17 +57,20 @@ class Room(models.Model):
 
 class Player(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    currentRoom = models.IntegerField(default=0)
+    # currentRoom = models.IntegerField(default=0)
+    current_room = models.ForeignKey(
+        Room, on_delete=models.CASCADE, null=True, blank=True)
     uuid = models.UUIDField(default=uuid.uuid4, unique=True)
 
     def initialize(self):
-        if self.currentRoom == 0:
-            self.currentRoom = Room.objects.first().id
+        if self.current_room == 0:
+            self.current_room = Room.objects.first().id
             self.save()
 
+    # if the room was deleted, put the player back in start
     def room(self):
         try:
-            return Room.objects.get(id=self.currentRoom)
+            return Room.objects.get(id=self.current_room)
         except Room.DoesNotExist:
             self.initialize()
             return self.room()
