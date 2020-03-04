@@ -124,22 +124,8 @@ def say(request):
     # IMPLEMENT
     return JsonResponse({'error': "Not yet implemented"}, safe=True, status=500)
 
-
-class RoomSerializer(serializers.Serializer):
-    title = serializers.CharField()
-    description = serializers.CharField()
-    # north = meta serialzier for a room?
-    # south = meta serializers for a room
-    # east = meta serializers for a room
-    # west = meta serializers for a room
-    x_cor = serializers.IntegerField()
-    y_cor = serializers.IntegerField()
-
-
 # @csrf_exempt
 @api_view(["GET"])
 def rooms(request):
-    dungeon = Room.objects.all()
-    serializer = RoomSerializer(dungeon, many=True)
-    return JsonResponse({"dungeon": serializer.data, 'rooms shown': len(serializer.data)})
-    # return the entire rooms table, good luck
+    dungeon = Room.objects.all().values().order_by('id')
+    return JsonResponse({"Dungeon": list(dungeon)})
