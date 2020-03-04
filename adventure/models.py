@@ -40,14 +40,14 @@ class Room(models.Model):
             destination.save()
             print(f'successfully connected {self} to {destination}')
 
-    # gets the player name with the given ID
+    # returns a list of all other players names in the current room?
     def playerNames(self, currentPlayerID):
-        return [p.user.username for p in Player.objects.filter(currentRoom=self.id)
+        return [p.user.username for p in Player.objects.filter(current_room=self.id)
                 if p.id != int(currentPlayerID)]
 
-    # what is the player UUID?
+    # returns all other players UUID's
     def playerUUIDs(self, currentPlayerID):
-        return [p.uuid for p in Player.objects.filter(currentRoom=self.id)
+        return [p.uuid for p in Player.objects.filter(current_room=self.id)
                 if p.id != int(currentPlayerID)]
 
     # * Returns a list of dicts containing id and name for all objects in that room
@@ -57,23 +57,20 @@ class Room(models.Model):
 
 class Player(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    # currentRoom = models.IntegerField(default=0)
     current_room = models.ForeignKey(
-        Room, on_delete=models.CASCADE, null=True, blank=True)
+        Room, on_delete=models.CASCADE, null=True, blank=True, default=None)
     uuid = models.UUIDField(default=uuid.uuid4, unique=True)
 
     def initialize(self):
-        if self.current_room == 0:
-            self.current_room = Room.objects.first().id
+        if self.current_room is None:
+            self.current_room = Room.objects.first()
             self.save()
 
     # if the room was deleted, put the player back in start
     def room(self):
-        try:
-            return Room.objects.get(id=self.current_room)
-        except Room.DoesNotExist:
+        if self.current_room is None:
             self.initialize()
-            return self.room()
+        return self.current_room
 
     # * Returns a list of all objects whose current_id matches the player's user_id
     def inventory(self):
