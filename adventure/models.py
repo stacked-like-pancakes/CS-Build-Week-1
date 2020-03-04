@@ -10,14 +10,23 @@ class Room(models.Model):
     title = models.CharField(max_length=50, default="DEFAULT TITLE")
     description = models.CharField(
         max_length=500, default="DEFAULT DESCRIPTION")
-    north = models.IntegerField(default=None, null=True)
-    south = models.IntegerField(default=None, null=True)
-    east = models.IntegerField(default=None, null=True)
-    west = models.IntegerField(default=None, null=True)
+    # north = models.IntegerField(default=None, null=True)
+    # south = models.IntegerField(default=None, null=True)
+    # east = models.IntegerField(default=None, null=True)
+    # west = models.IntegerField(default=None, null=True)
+    north = models.ForeignKey(
+        'self', related_name="north_exit", on_delete=models.CASCADE, null=True)
+    south = models.ForeignKey(
+        'self', related_name="south_exit", on_delete=models.CASCADE, null=True)
+    west = models.ForeignKey(
+        'self', related_name="west_exit", on_delete=models.CASCADE, null=True)
+    east = models.ForeignKey(
+        'self', related_name="east_exit", on_delete=models.CASCADE, null=True)
     x_cor = models.IntegerField(default=0)
     y_cor = models.IntegerField(default=0)
 
     def connectRooms(self, destination_room, direction):
+        print(f'initializing connection from {self} to {destination_room}')
         opposite = {
             'north': 'south',
             'south': 'north',
@@ -31,9 +40,9 @@ class Room(models.Model):
         else:
             setattr(self, direction, destination)
             setattr(destination, opposite[direction], self)
-            return
-        destination.save()
-        self.save()
+            self.save()
+            destination.save()
+            print(f'successfully connected {self} to {destination}')
 
     # gets the player name with the given ID
     def playerNames(self, currentPlayerID):
