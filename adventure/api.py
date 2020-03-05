@@ -95,14 +95,14 @@ def interact(request):
     command = request.data['command']
     # * Assumes a player provies an item_id in POST request body
     # * Additionally, assume items() method on room class to return a list of items in a room
-    inventory = player.inventory()
-    contents = room.contents()
+    # inventory = player.inventory()
+    # contents = room.contents()
 
     # * If player users 'inspect' command, return a list of the items contained in the room
     if command == 'i':
         return JsonResponse({
-            'contents': contents,
-            'inventory': inventory
+            'contents': list(room.contents()),
+            'inventory': list(player.inventory())
         })
 
     # * If player uses a 'grab' command, pick up item by updating the item's currentPossessor field
@@ -110,27 +110,24 @@ def interact(request):
         # * Retrieve id for item to grab
 
         item_id = request.data['item_id']
-        item = next(
-            (item for item in contents if item['id'] == item_id), None)
-        item.currentPosessor = player_id
+        # item = next(
+        #     (item for item in contents if item['uuid'] == item_id), None)
+        item = Item.objects.get(uuid=item_id)
+        item.currentPossessor = player.uuid
         item.save()
         return JsonResponse({
-            'name': player.user.username,
-            'inventory': player.inventory,
-            'contents': room.contents
+            'contents': list(room.contents()),
+            'inventory': list(player.inventory())
         })
     if command == 'd':
         # * Dropping will set the item's currentPossessor field to the id of the room.
         item_id = request.data['item_id']
-        item = next(
-            (item for item in inventory if item['id'] == item_id), None)
-        item = None
-        item.currentPossessor = room_id
+        item = Item.objects.get(uuid=item_id)
+        item.currentPossessor = room.uuid
         item.save()
         return JsonResponse({
-            'name': player.user.username,
-            'inventory': player.inventory,
-            'contents': room.contents
+            'contents': list(room.contents()),
+            'inventory': list(player.inventory())
         })
 
 
