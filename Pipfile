@@ -17,6 +17,7 @@ django-rest-api = "*"
 pylint = "*"
 autopep8 = "*"
 pylint-django = "*"
+whitenoise = "*"
 
 [dev-packages]
 
