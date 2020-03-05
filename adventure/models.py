@@ -43,7 +43,7 @@ class Room(models.Model):
             destination.current_exits += 1
             self.save()
             destination.save()
-            print(f'SUCCESFULLY CONNECTED {self} to {destination}')
+            # print(f'SUCCESFULLY CONNECTED {self} to {destination}')
 
     # returns a list of all other players names in the current room?
     def playerNames(self, currentPlayerID):
