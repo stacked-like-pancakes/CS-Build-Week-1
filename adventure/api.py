@@ -89,29 +89,18 @@ def interact(request):
     player_uuid = player.uuid
     room = player.room()
     room_id = room.id
-    # * object from POST request body
-    # data = json.loads(request.body)
-    # * value of specified key in data from POST request body
-    command = request.data['command']
-    # * Assumes a player provies an item_id in POST request body
-    # * Additionally, assume items() method on room class to return a list of items in a room
-    # inventory = player.inventory()
-    # contents = room.contents()
 
-    # * If player users 'inspect' command, return a list of the items contained in the room
+    command = request.data['command']
+# * 'inspect' command returns user's inventory and current room's contents
     if command == 'i':
         return JsonResponse({
             'contents': list(room.contents()),
             'inventory': list(player.inventory())
         })
 
-    # * If player uses a 'grab' command, pick up item by updating the item's currentPossessor field
+    # * If player uses a 'grab' command, pick up item by updating the item's currentPossessor field to that user's uuid
     if command == 'g':
-        # * Retrieve id for item to grab
-
         item_id = request.data['item_id']
-        # item = next(
-        #     (item for item in contents if item['uuid'] == item_id), None)
         item = Item.objects.get(uuid=item_id)
         item.currentPossessor = player.uuid
         item.save()
@@ -119,8 +108,8 @@ def interact(request):
             'contents': list(room.contents()),
             'inventory': list(player.inventory())
         })
+        # * If player uses a 'drop' command, pick up item by updating the item's currentPossessor field to that user's uuid
     if command == 'd':
-        # * Dropping will set the item's currentPossessor field to the id of the room.
         item_id = request.data['item_id']
         item = Item.objects.get(uuid=item_id)
         item.currentPossessor = room.uuid
