@@ -25,7 +25,6 @@ class Room(models.Model):
     current_exits = models.IntegerField(default=0)
 
     def connectRooms(self, destination_room, direction):
-        print(f'initializing connection from {self} to {destination_room}')
         opposite = {
             'north': 'south',
             'south': 'north',
@@ -43,7 +42,6 @@ class Room(models.Model):
             destination.current_exits += 1
             self.save()
             destination.save()
-            print(f'successfully connected {self} to {destination}')
 
     # returns a list of all other players names in the current room?
     def playerNames(self, currentPlayerID):
