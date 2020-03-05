@@ -24,6 +24,7 @@ class Room(models.Model):
     y_cor = models.IntegerField(default=0)
     max_exits = models.IntegerField(default=3)
     current_exits = models.IntegerField(default=0)
+    uuid = models.UUIDField(default=uuid.uuid4, unique=True)
 
     def connectRooms(self, destination_room, direction):
         opposite = {
