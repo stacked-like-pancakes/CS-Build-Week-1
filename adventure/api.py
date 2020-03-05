@@ -22,7 +22,7 @@ def initialize(request):
     uuid = player.uuid
     room = player.room()
     players = room.playerNames(player_id)
-    return JsonResponse({'uuid': uuid, 'name': player.user.username, 'title': room.title, 'description': room.description, 'players': players}, safe=True)
+    return JsonResponse({'uuid': uuid, 'name': player.user.username, 'title': room.title, 'description': room.description, 'players': players, 'x_cor': room.x_cor, 'y_cor': room.y_cor}, safe=True)
 
 
 # @csrf_exempt
@@ -89,47 +89,34 @@ def interact(request):
     player_uuid = player.uuid
     room = player.room()
     room_id = room.id
-    # * object from POST request body
-    data = json.loads(request.body)
-    # * value of specified key in data from POST request body
-    command = data['command']
-    # * Assumes a player provies an item_id in POST request body
-    item_id = data['item_id']
-    # * Additionally, assume items() method on room class to return a list of items in a room
-    inventory = player.inventory()
-    contents = room.contents()
 
-    # * If player users 'inspect' command, return a list of the items contained in the room
+    command = request.data['command']
+# * 'inspect' command returns user's inventory and current room's contents
     if command == 'i':
         return JsonResponse({
-            'contents': contents,
-            'inventory': inventory
+            'contents': list(room.contents()),
+            'inventory': list(player.inventory())
         })
 
-    # * If player uses a 'grab' command, pick up item by updating the item's currentPossessor field
+    # * If player uses a 'grab' command, pick up item by updating the item's currentPossessor field to that user's uuid
     if command == 'g':
-        # * Retrieve id for item to grab
-
-        item = next(
-            (item for item in contents if item['id'] == item_id), None)
-        item.currentPosessor = player_id
+        item_id = request.data['item_id']
+        item = Item.objects.get(uuid=item_id)
+        item.currentPossessor = player.uuid
         item.save()
         return JsonResponse({
-            'name': player.user.username,
-            'inventory': player.inventory,
-            'contents': room.contents
+            'contents': list(room.contents()),
+            'inventory': list(player.inventory())
         })
+        # * If player uses a 'drop' command, pick up item by updating the item's currentPossessor field to that user's uuid
     if command == 'd':
-        # * Dropping will set the item's currentPossessor field to the id of the room.
-        item = next(
-            (item for item in inventory if item['id'] == item_id), None)
-        item = None
-        item.currentPossessor = room_id
+        item_id = request.data['item_id']
+        item = Item.objects.get(uuid=item_id)
+        item.currentPossessor = room.uuid
         item.save()
         return JsonResponse({
-            'name': player.user.username,
-            'inventory': player.inventory,
-            'contents': room.contents
+            'contents': list(room.contents()),
+            'inventory': list(player.inventory())
         })
 
 
@@ -150,11 +137,11 @@ class RoomSerializer(serializers.ModelSerializer):
 @api_view(["GET"])
 def rooms(request):
     dungeon = Room.objects.all().values().order_by('id')
-    return JsonResponse({"Dungeon": list(dungeon)})
+    return JsonResponse({"dungeon": list(dungeon)})
 
 
 @api_view(["GET"])
 def single_room(request, room_id):
     room = Room.objects.get(id=room_id)
     response = RoomSerializer(room)
-    return JsonResponse({"Room": response.data})
+    return JsonResponse({"room": response.data})
