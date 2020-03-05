@@ -21,6 +21,8 @@ class Room(models.Model):
         'self', related_name="east_exit", on_delete=models.CASCADE, null=True)
     x_cor = models.IntegerField(default=0)
     y_cor = models.IntegerField(default=0)
+    max_exits = models.IntegerField(default=4)
+    current_exits = models.IntegerField(default=0)
 
     def connectRooms(self, destination_room, direction):
         print(f'initializing connection from {self} to {destination_room}')
@@ -37,6 +39,8 @@ class Room(models.Model):
         else:
             setattr(self, direction, destination)
             setattr(destination, opposite[direction], self)
+            self.current_exits += 1
+            destination.current_exits += 1
             self.save()
             destination.save()
             print(f'successfully connected {self} to {destination}')

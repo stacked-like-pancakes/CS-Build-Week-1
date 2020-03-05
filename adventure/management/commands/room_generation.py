@@ -22,7 +22,7 @@ class Command(BaseCommand):
 def generate_map(room_count, width, height):
     rooms = 1
     spawn = Room(title="The Nexus",
-                 description="The starting point of your journey.", x_cor=0, y_cor=0)
+                 description="The starting point of your journey.", x_cor=0, y_cor=0, current_exits=1)
     spawn.save()
     dungeon = spawn
     grid = [None] * width
@@ -53,7 +53,7 @@ def generate_map(room_count, width, height):
             # choose a new direction
             new_direction = random.choice(choices)
             direction = new_direction
-            next_room = getattr(current_room, direction, None)
+            next_room = getattr(current_room, 'direction', None)
             if direction == 'north':
                 y_cor += 1
             if direction == 'south':
@@ -64,16 +64,34 @@ def generate_map(room_count, width, height):
                 x_cor -= 1
 
         # check if a room isnt already at that coordinate
-        room_set = Room.objects.filter(x_cor=x_cor, y_cor=y_cor)
+        room_set = Room.objects.all().filter(
+            x_cor=x_cor, y_cor=y_cor)
+        for r in room_set:
+            current_exits = r.current_exits
+            max_exits = r.max_exits
+
+        # print(room_values.current_exits)
+        print(len(room_set))
         if len(room_set) == 0:
             # if empty, generate a new room
             new_room = Room(title=f'generic room at {x_cor}, {y_cor}',
-                            description='Has the dusty smell of stone', x_cor=x_cor, y_cor=y_cor)
+                            description='Has the dusty smell of stone', x_cor=x_cor, y_cor=y_cor, current_exits=1)
             new_room.save()
             current_room.connectRooms(new_room, direction)
             rooms += 1
+            print('----------------There were no rooms at cords -------------------')
+        elif current_exits < max_exits:
+            print(f'current exits: {current_exits}, max exits: {max_exits}')
+            new_room = Room(title=f'generic room at {x_cor}, {y_cor}',
+                            description='Has the dusty smell of stone', x_cor=x_cor, y_cor=y_cor, current_exits=1)
+            new_room.save()
+            current_room.connectRooms(new_room, direction)
+            rooms += 1
+            print(
+                '=========!!!!!!!!!!!Current exits is less than max exits!!!!!!!!!!!!!!!!=============')
         else:
             # if it exists, just connect the rooms and go back to spawn
+            print('?????????????????????????????????????')
             new_room = room_set[0]
             current_room.connectRooms(new_room, direction)
 

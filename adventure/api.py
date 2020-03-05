@@ -22,7 +22,7 @@ def initialize(request):
     uuid = player.uuid
     room = player.room()
     players = room.playerNames(player_id)
-    return JsonResponse({'uuid': uuid, 'name': player.user.username, 'title': room.title, 'description': room.description, 'players': players}, safe=True)
+    return JsonResponse({'uuid': uuid, 'name': player.user.username, 'title': room.title, 'description': room.description, 'players': players, 'x_cor': room.x_cor, 'y_cor': room.y_cor}, safe=True)
 
 
 # @csrf_exempt
@@ -150,11 +150,11 @@ class RoomSerializer(serializers.ModelSerializer):
 @api_view(["GET"])
 def rooms(request):
     dungeon = Room.objects.all().values().order_by('id')
-    return JsonResponse({"Dungeon": list(dungeon)})
+    return JsonResponse({"dungeon": list(dungeon)})
 
 
 @api_view(["GET"])
 def single_room(request, room_id):
     room = Room.objects.get(id=room_id)
     response = RoomSerializer(room)
-    return JsonResponse({"Room": response.data})
+    return JsonResponse({"room": response.data})
