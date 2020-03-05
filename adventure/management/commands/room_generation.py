@@ -1,28 +1,21 @@
 import random
 from adventure.models import Player, Room
+from util.procedural_room import hallways, all_rooms
 from django.core.management.base import BaseCommand, CommandError
 from django.contrib.auth.models import User
-# start at 0,0
-# keep track of current location on map
-# traverse map randomly
-# if room exists, travel there
-# else room doesn't exist, create a new room in that direction
-# increment room count
 
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        # try:
         Room.objects.all().delete()
         generate_map(100, 15, 15)
-        # except:
-        # raise CommandError("Your generation done goofed.")
 
 
 def generate_map(room_count, width, height):
+    all_room_keys = list(all_rooms.keys())
     rooms = 1
     spawn = Room(title="The Nexus",
-                 description="The starting point of your journey.", x_cor=0, y_cor=0)
+                 description="The starting point of your journey.", x_cor=0, y_cor=0, room_type="home")
     spawn.save()
     dungeon = spawn
     grid = [None] * width
@@ -64,17 +57,41 @@ def generate_map(room_count, width, height):
                 x_cor -= 1
 
         # check if a room isnt already at that coordinate
-        room_set = Room.objects.filter(x_cor=x_cor, y_cor=y_cor)
+        room_set = Room.objects.filter(
+            x_cor=x_cor, y_cor=y_cor)
+
+        for r in room_set:
+            nr_current_exits = r.current_exits
+            nr_max_exits = r.max_exits
+
+        # Room(title = room_templates[choice]["title"], description = room_templates[choice]["description"])
+        random_hallway = random.choice(list(hallways.keys()))
+
         if len(room_set) == 0:
-            # if empty, generate a new room
-            new_room = Room(title=f'generic room at {x_cor}, {y_cor}',
-                            description='Has the dusty smell of stone', x_cor=x_cor, y_cor=y_cor)
-            new_room.save()
-            current_room.connectRooms(new_room, direction)
-            rooms += 1
+            if current_room.current_exits < current_room.max_exits:
+                # Checks the room type
+                if current_room.room_type == "content":
+                    random_hallway = random.choice(list(hallways.keys()))
+                    new_room = Room(
+                        title=hallways[random_hallway]["title"],
+                        description=hallways[random_hallway]["description"],
+                        max_exits=hallways[random_hallway]["max_exits"],
+                        room_type=hallways[random_hallway]["room_type"],
+                        x_cor=x_cor, y_cor=y_cor)
+                else:
+                    random_room = random.choice(all_room_keys)
+                    new_room = Room(
+                        title=all_rooms[random_room]["title"],
+                        description=all_rooms[random_room]["description"],
+                        max_exits=all_rooms[random_room]["max_exits"],
+                        room_type=all_rooms[random_room]["room_type"],
+                        x_cor=x_cor, y_cor=y_cor)
+                new_room.save()
+                current_room.connectRooms(new_room, direction)
+                rooms += 1
         else:
-            # if it exists, just connect the rooms and go back to spawn
-            new_room = room_set[0]
-            current_room.connectRooms(new_room, direction)
+            if nr_current_exits < nr_max_exits and current_room.current_exits < current_room.max_exits:
+                next_room = room_set[0]
+                current_room.connectRooms(next_room, direction)
 
     return dungeon
