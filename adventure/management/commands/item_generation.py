@@ -34,12 +34,12 @@ adjectives = [
 
 
 def populate_items(items_count):
-    room_ids = [room.id for room in Room.objects.all()]
+    room_uuids = [room.uuid for room in Room.objects.all()]
     items_populated = 0
 
     while items_populated < items_count:
         new_item = Item(base=f'{random.choice(adjectives)} {random.choice(base_names)}',
-                        currentPossessor=random.choice(room_ids))
+                        currentPossessor=random.choice(room_uuids))
         items_populated += 1
         new_item.save()
         # print(

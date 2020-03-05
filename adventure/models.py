@@ -24,6 +24,7 @@ class Room(models.Model):
     y_cor = models.IntegerField(default=0)
     max_exits = models.IntegerField(default=3)
     current_exits = models.IntegerField(default=0)
+    uuid = models.UUIDField(default=uuid.uuid4, unique=True)
 
     def connectRooms(self, destination_room, direction):
         opposite = {
@@ -57,7 +58,9 @@ class Room(models.Model):
 
     # * Returns a list of dicts containing id and name for all objects in that room
     def contents(self):
-        return [{item.name, item.currentPossessor, item.uuid} for item in Item.objects.filter(currentRoom=self.id)]
+        # return [{item.name, item.currentPossessor, item.uuid} for item in Item.objects.filter(currentRoom=self.uuid)]
+        print(f'self.uuid = {self.uuid}')
+        return Item.objects.filter(currentPossessor=self.uuid).values()
 
 
 class Player(models.Model):
@@ -79,13 +82,14 @@ class Player(models.Model):
 
     # * Returns a list of all objects whose current_id matches the player's user_id
     def inventory(self):
-        return Item.objects.get(currentPossessor=self.id)
+        print(f'self.uuid = {self.uuid}')
+        return Item.objects.filter(currentPossessor=self.uuid).values()
 
 
 class Item(models.Model):
     base = models.CharField(max_length=128)
-    # * Possessor is either a room_id or a user_id -- depending on what object 'owns' the item
-    currentPossessor = models.IntegerField(default=0)
+    # * Possessor is either a uuid of a room or user -- depending on what object 'owns' the item
+    currentPossessor = models.CharField(max_length=128)
     uuid = models.UUIDField(default=uuid.uuid4, unique=True)
 
 
