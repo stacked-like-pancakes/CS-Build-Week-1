@@ -180,6 +180,6 @@ LOGGING = {
 STATIC_URL = '/staticfiles/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-STATICFILES_DIRS = (os.path.join(BASE_DIR, 'staticfiles/img'))
+STATICFILES_DIRS = (os.path.join(BASE_DIR, 'staticfiles/img'),)
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
