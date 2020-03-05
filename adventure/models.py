@@ -89,7 +89,7 @@ class Player(models.Model):
 class Item(models.Model):
     base = models.CharField(max_length=128)
     # * Possessor is either a room_id or a user_id -- depending on what object 'owns' the item
-    currentPossessor = models.CharField()
+    currentPossessor = models.CharField(max_length=128)
     uuid = models.UUIDField(default=uuid.uuid4, unique=True)
 
 
