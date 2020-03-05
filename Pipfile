@@ -23,7 +23,7 @@ pylint = "*"
 pylint-django = "*"
 
 [scripts]
-sersver = "python manage.py runserver"
+server = "python manage.py runserver"
 makemigrations = "python manage.py makemigrations"
 migrate = "python manage.py migrate"
 
