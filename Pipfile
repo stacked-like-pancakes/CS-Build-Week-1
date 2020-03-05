@@ -6,7 +6,6 @@ name = "pypi"
 [packages]
 django = "*"
 djangorestframework = "*"
-python-decouple = "*"
 django-rest-auth = "*"
 django-allauth = "*"
 pusher = "*"
@@ -14,12 +13,15 @@ django-cors-headers = "*"
 gunicorn = "*"
 django-heroku = "*"
 django-rest-api = "*"
-pylint = "*"
 autopep8 = "*"
-pylint-django = "*"
 whitenoise = "*"
+django-environ = "*"
+psycopg2 = {verson = "*", sys_platform="==linux"}
 
 [dev-packages]
+autopep8 = "*"
+pylint = "*"
+pylint-django = "*"
 
 [requires]
-python_version = "3.8"
+python_version = "3"
