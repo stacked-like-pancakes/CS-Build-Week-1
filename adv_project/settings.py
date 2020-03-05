@@ -10,7 +10,7 @@ import os
 import logging
 import environ
 
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
+# from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -180,7 +180,6 @@ LOGGING = {
 STATIC_URL = '/staticfiles/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'staticfiles/img')]
+STATICFILES_DIRS = (os.path.join(BASE_DIR, 'staticfiles/img'))
 
-
-django_heroku.settings(locals())
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
