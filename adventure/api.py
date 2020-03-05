@@ -90,11 +90,10 @@ def interact(request):
     room = player.room()
     room_id = room.id
     # * object from POST request body
-    data = json.loads(request.body)
+    # data = json.loads(request.body)
     # * value of specified key in data from POST request body
-    command = data['command']
+    command = request.data['command']
     # * Assumes a player provies an item_id in POST request body
-    item_id = data['item_id']
     # * Additionally, assume items() method on room class to return a list of items in a room
     inventory = player.inventory()
     contents = room.contents()
@@ -110,6 +109,7 @@ def interact(request):
     if command == 'g':
         # * Retrieve id for item to grab
 
+        item_id = request.data['item_id']
         item = next(
             (item for item in contents if item['id'] == item_id), None)
         item.currentPosessor = player_id
@@ -121,6 +121,7 @@ def interact(request):
         })
     if command == 'd':
         # * Dropping will set the item's currentPossessor field to the id of the room.
+        item_id = request.data['item_id']
         item = next(
             (item for item in inventory if item['id'] == item_id), None)
         item = None
