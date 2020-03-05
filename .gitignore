@@ -14,5 +14,3 @@ db.sqlite3
 
 tmp
 .vscode/
-adventure/migrations/
-adventure/migrations/0001_initial.py
