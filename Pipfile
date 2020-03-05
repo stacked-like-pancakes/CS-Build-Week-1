@@ -11,12 +11,11 @@ django-allauth = "*"
 pusher = "*"
 django-cors-headers = "*"
 gunicorn = "*"
-django-heroku = "*"
 django-rest-api = "*"
 autopep8 = "*"
 whitenoise = "*"
 django-environ = "*"
-psycopg2 = {verson = "*", sys_platform="==linux"}
+psycopg2 = {verson = "*",sys_platform = "==linux"}
 
 [dev-packages]
 autopep8 = "*"
@@ -30,4 +29,3 @@ migrate = "python manage.py migrate"
 
 [requires]
 python_version = "3"
-
