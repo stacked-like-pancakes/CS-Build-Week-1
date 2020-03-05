@@ -34,7 +34,7 @@ adjectives = [
 
 
 def populate_items(items_count):
-    room_uuids = [room.id for room in Room.objects.all()]
+    room_uuids = [room.uuid for room in Room.objects.all()]
     items_populated = 0
 
     while items_populated < items_count:
