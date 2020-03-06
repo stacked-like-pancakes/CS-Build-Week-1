@@ -26,6 +26,7 @@ pylint-django = "*"
 server = "python manage.py runserver"
 makemigrations = "python manage.py makemigrations"
 migrate = "python manage.py migrate"
+room_generation = "python manage.py room_generation"
 
 [requires]
 python_version = "3"
