@@ -19,9 +19,10 @@ class Room(models.Model):
         'self', related_name="west_exit", on_delete=models.CASCADE, null=True)
     east = models.ForeignKey(
         'self', related_name="east_exit", on_delete=models.CASCADE, null=True)
+    room_type = models.CharField(max_length=50, default='hallway')
     x_cor = models.IntegerField(default=0)
     y_cor = models.IntegerField(default=0)
-    max_exits = models.IntegerField(default=4)
+    max_exits = models.IntegerField(default=3)
     current_exits = models.IntegerField(default=0)
 
     def connectRooms(self, destination_room, direction):
@@ -42,6 +43,7 @@ class Room(models.Model):
             destination.current_exits += 1
             self.save()
             destination.save()
+            print(f'SUCCESFULLY CONNECTED {self} to {destination}')
 
     # returns a list of all other players names in the current room?
     def playerNames(self, currentPlayerID):
