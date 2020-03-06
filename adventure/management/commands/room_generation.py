@@ -78,6 +78,9 @@ def generate_map(room_count, width, height):
                         max_exits=hallways[random_hallway]["max_exits"],
                         room_type=hallways[random_hallway]["room_type"],
                         x_cor=x_cor, y_cor=y_cor)
+                    new_room.save()
+                    current_room.connectRooms(new_room, direction)
+                    rooms += 1
                 else:
                     random_room = random.choice(all_room_keys)
                     new_room = Room(
@@ -86,9 +89,9 @@ def generate_map(room_count, width, height):
                         max_exits=all_rooms[random_room]["max_exits"],
                         room_type=all_rooms[random_room]["room_type"],
                         x_cor=x_cor, y_cor=y_cor)
-                new_room.save()
-                current_room.connectRooms(new_room, direction)
-                rooms += 1
+                    new_room.save()
+                    current_room.connectRooms(new_room, direction)
+                    rooms += 1
         else:
             if nr_current_exits < nr_max_exits and current_room.current_exits < current_room.max_exits:
                 next_room = room_set[0]
