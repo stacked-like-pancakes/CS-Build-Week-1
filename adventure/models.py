@@ -27,30 +27,12 @@ class Room(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, unique=True)
 
     def connectRooms(self, destination_room, direction):
-        opposite = {
-            'north': 'south',
-            'south': 'north',
-            'east': 'west',
-            'west': 'east'
-        }
-        # try:
-        #     destination = Room.objects.get(id=destination_room.id)
-        # except Room.DoesNotExist:
-        #     print("That room does not exist")
-        # else:
         setattr(self, direction, destination_room)
-        setattr(destination_room, opposite[direction], self)
         self.current_exits += 1
-        destination_room.current_exits += 1
         self.save()
-        destination_room.save()
-        print('\n')
-        print(
-            f'CONNECTED {self.title} at {self.x_cor}, {self.y_cor} to {getattr(self, direction, None).title} via {direction}')
-        print(
-            f'CONNECTED {destination_room.title} at {destination_room.x_cor}, {destination_room.y_cor} to {self.title} via {opposite[direction]}')
 
     # returns a list of all other players names in the current room?
+
     def playerNames(self, currentPlayerID):
         return [p.user.username for p in Player.objects.filter(current_room=self.id)
                 if p.id != int(currentPlayerID)]

@@ -21,6 +21,12 @@ def generate_map(room_count, width, height):
     grid = [None] * width
     grid = grid * height
     choices = ['north', 'east', 'south', 'west']
+    opposite = {
+        'north': 'south',
+        'west': 'east',
+        'east': 'west',
+        'south': 'north'
+    }
 
     while rooms < room_count:
         # start back at spawn
@@ -57,20 +63,21 @@ def generate_map(room_count, width, height):
                 x_cor -= 1
 
         print(
-            f"""Found dead end at {current_room.title} at {current_room.x_cor}, {current_room.y_cor}. 
-            Tunneler at {x_cor}, {y_cor}, and facing {direction}.""")
+            f"""Found dead end at {current_room.id} {current_room.title} at {current_room.x_cor}, {current_room.y_cor}. Tunneler at {x_cor}, {y_cor}, and facing {direction}.""")
         # check if a room isnt already at that coordinate
-        room_set = Room.objects.filter(
-            x_cor=x_cor, y_cor=y_cor)
+        room_set = Room.objects.filter(x_cor=x_cor, y_cor=y_cor)
+        print(f'Found {len(room_set)} room(s) at {x_cor}, {y_cor}')
 
         for r in room_set:
-            nr_current_exits = r.current_exits
-            nr_max_exits = r.max_exits
+            nr = r
 
         random_hallway = random.choice(list(hallways.keys()))
         if len(room_set) == 0:
+            print(f"No room exists, checking for additional space")
             # if the current room has space to make a room
             if current_room.current_exits < current_room.max_exits:
+                print(
+                    f"Current exits of {current_room.current_exits} less than max of {current_room.max_exits}")
                 # Checks the room type
                 if current_room.room_type == "content":
                     random_hallway = random.choice(list(hallways.keys()))
@@ -80,9 +87,7 @@ def generate_map(room_count, width, height):
                         max_exits=hallways[random_hallway]["max_exits"],
                         room_type=hallways[random_hallway]["room_type"],
                         x_cor=x_cor, y_cor=y_cor)
-                    new_room.save()
-                    current_room.connectRooms(new_room, direction)
-                    rooms += 1
+
                 else:
                     random_room = random.choice(all_room_keys)
                     new_room = Room(
@@ -91,12 +96,19 @@ def generate_map(room_count, width, height):
                         max_exits=all_rooms[random_room]["max_exits"],
                         room_type=all_rooms[random_room]["room_type"],
                         x_cor=x_cor, y_cor=y_cor)
-                    new_room.save()
-                    current_room.connectRooms(new_room, direction)
-                    rooms += 1
+                new_room.save()
+                current_room.connectRooms(new_room, direction)
+                new_room.connectRooms(current_room, opposite[direction])
+                rooms += 1
+            else:
+                print(f"Not enough space in current room, resetting.")
         else:
-            if nr_current_exits < nr_max_exits and current_room.current_exits < current_room.max_exits:
+            print(
+                f"Found {nr.title} at {nr.x_cor}, {nr.y_cor}, checking for space.")
+            if nr.current_exits < nr.max_exits and current_room.current_exits < current_room.max_exits:
                 # check if there isn't already an existing relationship in that direction
-
                 current_room.connectRooms(room_set[0], direction)
-    return dungeon
+            else:
+                print(
+                    f"Not enough space in either current room or next room, resetting.")
+    # return dungeon
