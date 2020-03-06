@@ -33,18 +33,18 @@ class Room(models.Model):
             'east': 'west',
             'west': 'east'
         }
-        try:
-            destination = Room.objects.get(id=destination_room.id)
-        except Room.DoesNotExist:
-            print("That room does not exist")
-        else:
-            setattr(self, direction, destination)
-            setattr(destination, opposite[direction], self)
-            self.current_exits += 1
-            destination.current_exits += 1
-            self.save()
-            destination.save()
-            # print(f'SUCCESFULLY CONNECTED {self} to {destination}')
+        # try:
+        #     destination = Room.objects.get(id=destination_room.id)
+        # except Room.DoesNotExist:
+        #     print("That room does not exist")
+        # else:
+        setattr(self, direction, destination)
+        setattr(destination, opposite[direction], self)
+        self.current_exits += 1
+        destination.current_exits += 1
+        self.save()
+        destination.save()
+        print(f'SUCCESFULLY CONNECTED {self} to {destination}')
 
     # returns a list of all other players names in the current room?
     def playerNames(self, currentPlayerID):
