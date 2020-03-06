@@ -8,7 +8,7 @@ from util.procedural_room import hallways, all_rooms
 class Command(BaseCommand):
     def handle(self, *args, **options):
         Room.objects.all().delete()
-        generate_map(50, 15, 15)
+        generate_map(100, 15, 15)
 
 
 def generate_map(room_count, width, height):
@@ -62,22 +62,16 @@ def generate_map(room_count, width, height):
             if direction == 'west':
                 x_cor -= 1
 
-        print(
-            f"""Found dead end at {current_room.id} {current_room.title} at {current_room.x_cor}, {current_room.y_cor}. Tunneler at {x_cor}, {y_cor}, and facing {direction}.""")
         # check if a room isnt already at that coordinate
         room_set = Room.objects.filter(x_cor=x_cor, y_cor=y_cor)
-        print(f'Found {len(room_set)} room(s) at {x_cor}, {y_cor}')
 
         for r in room_set:
             nr = r
 
         random_hallway = random.choice(list(hallways.keys()))
         if len(room_set) == 0:
-            print(f"No room exists, checking for additional space")
             # if the current room has space to make a room
             if current_room.current_exits < current_room.max_exits:
-                print(
-                    f"Current exits of {current_room.current_exits} less than max of {current_room.max_exits}")
                 # Checks the room type
                 if current_room.room_type == "content":
                     random_hallway = random.choice(list(hallways.keys()))
@@ -100,15 +94,8 @@ def generate_map(room_count, width, height):
                 current_room.connectRooms(new_room, direction)
                 new_room.connectRooms(current_room, opposite[direction])
                 rooms += 1
-            else:
-                print(f"Not enough space in current room, resetting.")
         else:
-            print(
-                f"Found {nr.title} at {nr.x_cor}, {nr.y_cor}, checking for space.")
             if nr.current_exits < nr.max_exits and current_room.current_exits < current_room.max_exits:
                 # check if there isn't already an existing relationship in that direction
                 current_room.connectRooms(room_set[0], direction)
-            else:
-                print(
-                    f"Not enough space in either current room or next room, resetting.")
     # return dungeon

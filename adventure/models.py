@@ -45,7 +45,6 @@ class Room(models.Model):
     # * Returns a list of dicts containing id and name for all objects in that room
     def contents(self):
         # return [{item.name, item.currentPossessor, item.uuid} for item in Item.objects.filter(currentRoom=self.uuid)]
-        print(f'self.uuid = {self.uuid}')
         return Item.objects.filter(currentPossessor=self.uuid).values()
 
 
@@ -68,7 +67,6 @@ class Player(models.Model):
 
     # * Returns a list of all objects whose current_id matches the player's user_id
     def inventory(self):
-        print(f'self.uuid = {self.uuid}')
         return Item.objects.filter(currentPossessor=self.uuid).values()
 
 

@@ -42,6 +42,5 @@ def populate_items(items_count):
                         currentPossessor=random.choice(room_uuids))
         items_populated += 1
         new_item.save()
-        # print(
-        #     f'new_item || base: {new_item.base} || currentPossessor: {new_item.currentPossessor}')
+
     return 'Complete'
