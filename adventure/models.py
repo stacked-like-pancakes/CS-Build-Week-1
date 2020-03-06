@@ -38,13 +38,17 @@ class Room(models.Model):
         # except Room.DoesNotExist:
         #     print("That room does not exist")
         # else:
-        setattr(self, direction, destination)
-        setattr(destination, opposite[direction], self)
+        setattr(self, direction, destination_room)
+        setattr(destination_room, opposite[direction], self)
         self.current_exits += 1
-        destination.current_exits += 1
+        destination_room.current_exits += 1
         self.save()
-        destination.save()
-        print(f'SUCCESFULLY CONNECTED {self} to {destination}')
+        destination_room.save()
+        print('\n')
+        print(
+            f'CONNECTED {self.title} at {self.x_cor}, {self.y_cor} to {getattr(self, direction, None).title} via {direction}')
+        print(
+            f'CONNECTED {destination_room.title} at {destination_room.x_cor}, {destination_room.y_cor} to {self.title} via {opposite[direction]}')
 
     # returns a list of all other players names in the current room?
     def playerNames(self, currentPlayerID):
