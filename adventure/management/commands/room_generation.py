@@ -1,14 +1,14 @@
 import random
-from adventure.models import Player, Room
-from util.procedural_room import hallways, all_rooms
-from django.core.management.base import BaseCommand, CommandError
 from django.contrib.auth.models import User
+from django.core.management.base import BaseCommand  # , CommandError
+from adventure.models import Room
+from util.procedural_room import hallways, all_rooms
 
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
         Room.objects.all().delete()
-        generate_map(100, 15, 15)
+        generate_map(50, 15, 15)
 
 
 def generate_map(room_count, width, height):
@@ -56,6 +56,9 @@ def generate_map(room_count, width, height):
             if direction == 'west':
                 x_cor -= 1
 
+        print(
+            f"""Found dead end at {current_room.title} at {current_room.x_cor}, {current_room.y_cor}. 
+            Tunneler at {x_cor}, {y_cor}, and facing {direction}.""")
         # check if a room isnt already at that coordinate
         room_set = Room.objects.filter(
             x_cor=x_cor, y_cor=y_cor)
@@ -64,10 +67,9 @@ def generate_map(room_count, width, height):
             nr_current_exits = r.current_exits
             nr_max_exits = r.max_exits
 
-        # Room(title = room_templates[choice]["title"], description = room_templates[choice]["description"])
         random_hallway = random.choice(list(hallways.keys()))
-
         if len(room_set) == 0:
+            # if the current room has space to make a room
             if current_room.current_exits < current_room.max_exits:
                 # Checks the room type
                 if current_room.room_type == "content":
@@ -94,7 +96,7 @@ def generate_map(room_count, width, height):
                     rooms += 1
         else:
             if nr_current_exits < nr_max_exits and current_room.current_exits < current_room.max_exits:
-                next_room = room_set[0]
-                current_room.connectRooms(next_room, direction)
+                # check if there isn't already an existing relationship in that direction
 
+                current_room.connectRooms(room_set[0], direction)
     return dungeon
